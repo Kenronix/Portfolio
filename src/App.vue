@@ -10,8 +10,8 @@ export default {
       profilePhoto,
       bg1,
       bg2,
-      isScrolled: false,
-      activeSection: 'home',
+      isScrolled: false,     // Tracks if user has scrolled down (for navbar background)
+      activeSection: 'home', // Tracks which section is currently visible (for green links)
       
       // --- CONTACT FORM DATA ---
       form: {
@@ -21,33 +21,61 @@ export default {
       },
 
       // --- CHATBOT DATA ---
-      isChatOpen: false,       // Is the chat window open?
-      chatInput: '',           // Current text in chat box
-      isChatLoading: false,    // Is AI thinking?
-      messages: [              // Chat history
+      isChatOpen: false,       
+      chatInput: '',           
+      isChatLoading: false,    
+      messages: [              
         { text: "Hi! I am Kenneth's AI assistant. Ask me anything about his projects or skills.", isUser: false }
       ]
     };
   },
   mounted() {
+    // Add scroll listener when component loads
     window.addEventListener('scroll', this.handleScroll);
+    // Run once on load to set the correct initial section
+    this.handleScroll(); 
   },
   beforeUnmount() {
+    // Clean up listener when component is destroyed
     window.removeEventListener('scroll', this.handleScroll);
   },
   methods: {
     handleScroll() {
+      // 1. Logic for Navbar Background (Transparent vs Dark)
       this.isScrolled = window.scrollY > 50;
+
+      // 2. Logic for Scroll Spy (Highlighting Active Section)
+      const sections = ['home', 'about', 'projects', 'contact'];
+      
+      // We add 250px offset so the link highlights *before* the section hits the very top
+      // This makes the UI feel more responsive.
+      const scrollPosition = window.scrollY + 250; 
+
+      for (const section of sections) {
+        const element = document.getElementById(section);
+        if (element) {
+          const top = element.offsetTop;
+          const height = element.offsetHeight;
+          
+          // Check if scroll position is within this section's bounds
+          if (scrollPosition >= top && scrollPosition < top + height) {
+            this.activeSection = section;
+          }
+        }
+      }
     },
+
+    // Smooth scroll to section when clicking a link
     scrollToSection(sectionId) {
       const element = document.getElementById(sectionId);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
+        // Manually set active section immediately for better UX
         this.activeSection = sectionId; 
       }
     },
 
-    // --- CONTACT FORM SUBMISSION (Standard) ---
+    // --- CONTACT FORM SUBMISSION ---
     submitContactForm() {
       if(this.form.name && this.form.email) {
         alert(`Thanks, ${this.form.name}! I received your message.`);
@@ -96,9 +124,8 @@ export default {
         // 2. Call API
         const result = await this.query({ "question": userMsg });
         
-        // 3. Add AI Response (Adjust 'result.text' based on your specific API return)
+        // 3. Add AI Response
         const aiText = result.text || result.answer || JSON.stringify(result);
-        
         this.messages.push({ text: aiText, isUser: false });
 
       } catch (error) {
@@ -106,7 +133,6 @@ export default {
         this.messages.push({ text: "Sorry, I can't connect to the server right now.", isUser: false });
       } finally {
         this.isChatLoading = false;
-        // Scroll to bottom again
         this.$nextTick(() => {
           const chatBody = this.$refs.chatBody;
           if(chatBody) chatBody.scrollTop = chatBody.scrollHeight;
@@ -119,6 +145,7 @@ export default {
 
 <template>
   <div id="home" class="container" :style="{ backgroundImage: `url(${bg2}), url(${bg1})` }">
+    
     <nav class="navbar" :class="{ 'scrolled': isScrolled }">
       <ul>
         <li :class="{ active: activeSection === 'home' }" @click="scrollToSection('home')">Home</li>
@@ -127,13 +154,37 @@ export default {
         <li :class="{ active: activeSection === 'contact' }" @click="scrollToSection('contact')">Contact</li>
       </ul>
     </nav>
+
     <div class="content">
        <div class="text">
         <p class="hello">Hello, I am</p>
         <h1 class="name name-gradient">KENNETH</h1>
         <h1 class="name name-gradient">JAMES</h1>
         <p class="role">and I am a <span>Front-end Developer</span></p>
+        
+        <div class="action-container">
+          
+          <a href="/Batuhan_CV.pdf" download="Batuhan_CV.pdf" class="download-cv-btn">
+            DOWNLOAD CV
+          </a>
+
+          <div class="social-icons">
+            <a href="https://github.com/Kenronix" target="_blank" title="GitHub">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+              </svg>
+            </a>
+
+            <a href="mailto:kennethjamesbatuhan@gmail.com" title="Email">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+              </svg>
+            </a>
+          </div>
+
+        </div>
       </div>
+      
       <div class="image-wrapper">
         <img :src="profilePhoto" class="profile-img" />
       </div>
@@ -166,7 +217,12 @@ export default {
       
       <div class="projects-grid">
         <div class="project-card">
-          <h3>LuTuon</h3>
+          <a href="https://lutuon.app/" target="_blank" class="project-link">
+            <h3>
+              LuTuon 
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            </h3>
+          </a>
           <p class="project-subtitle">Gamified Mobile Cooking Simulator</p>
           <p class="project-desc">
             A mobile simulator for Filipino cuisine built with C# and Unity. 
@@ -181,7 +237,7 @@ export default {
         </div>
 
         <div class="project-card">
-          <h3>Borrow Hon</h3>
+          <h3>BorrowHon</h3>
           <p class="project-subtitle">Library Management System</p>
           <p class="project-desc">
             A user-centric platform designed to streamline book borrowing workflows. 
@@ -233,7 +289,7 @@ export default {
   </div>
 
   <footer class="footer">
-    <p>&copy; 2025 Kenneth James Batuhan. All rights reserved.</p>
+    <p>&copy; 2025 <b>Kenneth James Batuhan</b>. All rights reserved.</p>
   </footer>
 
   <div class="chatbot-widget">
@@ -287,7 +343,7 @@ export default {
   left: 0;
   width: 100%;
   z-index: 1000;
-  background-color: transparent;
+  background-color: transparent; /* Transparent initially */
   padding-top: 50px;
   padding-bottom: 20px;
   border-bottom: 1px solid transparent;
@@ -296,10 +352,11 @@ export default {
   transition: all 0.3s ease-in-out;
 }
 
+/* Navbar style when scrolled */
 .navbar.scrolled {
   padding-top: 20px; 
   padding-bottom: 20px;
-  background-color: rgba(36, 36, 36, 0.95); 
+  background-color: rgba(36, 36, 36, 0.95); /* Dark semi-transparent */
   backdrop-filter: blur(15px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
@@ -390,6 +447,60 @@ export default {
   max-width: 400px; 
   height: auto;
   border-radius: 10px;
+}
+
+/* --- BUTTON & ICONS CONTAINER (Responsive) --- */
+.action-container {
+  display: flex;
+  align-items: center;     
+  justify-content: center; /* CENTER on Mobile */
+  gap: 20px;               
+  margin-top: 35px;
+  width: 100%;             
+}
+
+/* --- DOWNLOAD BUTTON --- */
+.download-cv-btn {
+  display: flex; 
+  align-items: center;
+  justify-content: center;
+  padding: 12px 35px;
+  border: 2px solid #00ff40;
+  background-color: transparent;
+  color: #00ff40;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  text-decoration: none;
+  border-radius: 50px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.download-cv-btn:hover {
+  background-color: #00ff40;
+  color: #003f00;
+  transform: translateY(-3px);
+  box-shadow: 0 0 20px rgba(0, 255, 64, 0.4);
+}
+
+/* --- SOCIAL ICONS --- */
+.social-icons {
+  display: flex;
+  gap: 15px;
+}
+
+.social-icons svg {
+  width: 32px;
+  height: 32px;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.social-icons a:hover svg {
+  color: #00ff40;
+  transform: translateY(-3px);
 }
 
 /* --- SECTIONS COMMON STYLES --- */
@@ -499,19 +610,18 @@ export default {
   font-family: 'Montserrat', sans-serif;
 }
 
-/* --- UPDATED: CONTACT SECTION STYLES --- */
+/* --- CONTACT SECTION --- */
 .container-4 {
   min-height: 90vh;
   background-color: #111;
   display: flex;
   flex-direction: column;
-  justify-content: center; /* Vertically center */
-  align-items: center;     /* Horizontally center */
+  justify-content: center;
+  align-items: center;
   padding: 60px 20px;
   text-align: center;
 }
 
-/* 1. Added explicit width and centering to content-4 */
 .content-4 {
   width: 100%; 
   display: flex;
@@ -527,7 +637,7 @@ export default {
   max-width: 600px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.3);
   border: 1px solid #333;
-  margin: 0 auto; /* 2. Ensures card is centered if flex fails */
+  margin: 0 auto; 
 }
 
 .contact-header {
@@ -551,10 +661,9 @@ export default {
   font-weight: bold;
 }
 
-/* 3. Changed width to 100% and added box-sizing */
 input, textarea {
   width: 100%; 
-  box-sizing: border-box; /* Prevents padding from breaking width */
+  box-sizing: border-box; 
   padding: 12px;
   background-color: #2a2a2a;
   border: 1px solid #444;
@@ -563,6 +672,7 @@ input, textarea {
   font-family: 'Montserrat', sans-serif;
   font-size: 16px;
   transition: all 0.3s;
+  resize: none;
 }
 
 input:focus, textarea:focus {
@@ -652,6 +762,11 @@ input:focus, textarea:focus {
   .role {
     font-size: 28px;
   }
+  
+  /* Align Action Container to LEFT on Desktop */
+  .action-container {
+    justify-content: flex-start;
+  }
 
   .image-wrapper {
     margin-top: 0;
@@ -668,6 +783,7 @@ input:focus, textarea:focus {
   }
 }
 
+/* --- CHATBOT WIDGET STYLES --- */
 .chatbot-widget {
   position: fixed;
   bottom: 20px;
@@ -678,7 +794,6 @@ input:focus, textarea:focus {
   align-items: flex-end;
 }
 
-/* Floating Toggle Button */
 .chat-button {
   width: 60px;
   height: 60px;
@@ -700,7 +815,6 @@ input:focus, textarea:focus {
   background-color: #00cc33;
 }
 
-/* Chat Window */
 .chat-window {
   width: 350px;
   height: 450px;
@@ -711,11 +825,10 @@ input:focus, textarea:focus {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  margin-bottom: 15px; /* Space between window and button */
+  margin-bottom: 15px; 
   font-family: 'Montserrat', sans-serif;
 }
 
-/* Header */
 .chat-header {
   background-color: #00ff40;
   color: #003f00;
@@ -735,7 +848,6 @@ input:focus, textarea:focus {
   line-height: 1;
 }
 
-/* Body (Messages) */
 .chat-body {
   flex: 1;
   padding: 15px;
@@ -746,7 +858,6 @@ input:focus, textarea:focus {
   gap: 10px;
 }
 
-/* Messages */
 .message {
   max-width: 80%;
   padding: 10px 14px;
@@ -775,7 +886,6 @@ input:focus, textarea:focus {
   color: #888;
 }
 
-/* Footer (Input) */
 .chat-footer {
   padding: 10px;
   background-color: #222;
@@ -810,12 +920,34 @@ input:focus, textarea:focus {
   color: white;
 }
 
-/* Animations */
 .slide-fade-enter-active, .slide-fade-leave-active {
   transition: all 0.3s ease;
 }
 .slide-fade-enter-from, .slide-fade-leave-to {
   opacity: 0;
   transform: translateY(20px);
+}
+
+.project-link {
+  text-decoration: none; /* Removes underline */
+  color: inherit; /* Keeps default black color */
+  display: inline-block;
+}
+
+.project-link h3 {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Space between text and icon */
+  transition: color 0.3s ease;
+}
+
+/* Hover Effect */
+.project-link:hover h3 {
+  color: #00b32d; /* Turns green on hover */
+}
+
+.project-link svg {
+  width: 20px;
+  height: 20px;
 }
 </style>
