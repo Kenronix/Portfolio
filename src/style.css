@@ -1,0 +1,9 @@
+body {
+  margin: 0;
+  font-family: montserrat;
+  color: white;
+  overflow-x: hidden; /* Prevents horizontal scroll globally */
+  background-color: #242424;
+}
+
+
