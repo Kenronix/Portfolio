@@ -10,8 +10,8 @@ export default {
       profilePhoto,
       bg1,
       bg2,
-      isScrolled: false,     // Tracks if user has scrolled down (for navbar background)
-      activeSection: 'home', // Tracks which section is currently visible (for green links)
+      isScrolled: false,     // Tracks if user has scrolled down
+      activeSection: 'home', // Tracks which section is currently visible
       
       // --- CONTACT FORM DATA ---
       form: {
@@ -24,31 +24,21 @@ export default {
       isChatOpen: false,       
       chatInput: '',           
       isChatLoading: false,    
-      messages: [              
-        { text: "Hi! I am Kenneth's AI assistant. Ask me anything about his projects or skills.", isUser: false }
-      ]
+      messages: [] // Start empty so the Welcome Screen shows first
     };
   },
   mounted() {
-    // Add scroll listener when component loads
     window.addEventListener('scroll', this.handleScroll);
-    // Run once on load to set the correct initial section
     this.handleScroll(); 
   },
   beforeUnmount() {
-    // Clean up listener when component is destroyed
     window.removeEventListener('scroll', this.handleScroll);
   },
   methods: {
     handleScroll() {
-      // 1. Logic for Navbar Background (Transparent vs Dark)
       this.isScrolled = window.scrollY > 50;
 
-      // 2. Logic for Scroll Spy (Highlighting Active Section)
       const sections = ['home', 'about', 'projects', 'contact'];
-      
-      // We add 250px offset so the link highlights *before* the section hits the very top
-      // This makes the UI feel more responsive.
       const scrollPosition = window.scrollY + 250; 
 
       for (const section of sections) {
@@ -56,8 +46,6 @@ export default {
         if (element) {
           const top = element.offsetTop;
           const height = element.offsetHeight;
-          
-          // Check if scroll position is within this section's bounds
           if (scrollPosition >= top && scrollPosition < top + height) {
             this.activeSection = section;
           }
@@ -65,17 +53,14 @@ export default {
       }
     },
 
-    // Smooth scroll to section when clicking a link
     scrollToSection(sectionId) {
       const element = document.getElementById(sectionId);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
-        // Manually set active section immediately for better UX
         this.activeSection = sectionId; 
       }
     },
 
-    // --- CONTACT FORM SUBMISSION ---
     submitContactForm() {
       if(this.form.name && this.form.email) {
         alert(`Thanks, ${this.form.name}! I received your message.`);
@@ -93,6 +78,7 @@ export default {
     },
 
     async query(data) {
+        // NOTE: Make sure your backend server is running on port 3000
         const response = await fetch(
             "http://localhost:3000/api/v1/prediction/a567f57f-bb61-42d9-b1d0-4455d4637a19",
             {
@@ -296,16 +282,45 @@ export default {
     <transition name="slide-fade">
       <div v-if="isChatOpen" class="chat-window">
         <div class="chat-header">
-          <span>AI Assistant</span>
+          <span>Kenji AI</span>
           <button @click="toggleChat" class="close-btn">×</button>
         </div>
         
-        <div class="chat-body" ref="chatBody">
-          <div v-for="(msg, index) in messages" :key="index" 
-               class="message" :class="{ 'user-msg': msg.isUser, 'ai-msg': !msg.isUser }">
-            {{ msg.text }}
+        <div class="chat-body" ref="chatBody" :class="{ 'has-messages': messages.length > 0 }">
+          
+          <div v-if="messages.length === 0" class="welcome-screen">
+            <svg class="welcome-logo" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z"/>
+            </svg>
+            <h2>Hello👋</h2>
+            <p>How can I help you today?</p>
           </div>
-          <div v-if="isChatLoading" class="message ai-msg loading-dots">...</div>
+
+          <div v-else class="message-list">
+            <div v-for="(msg, index) in messages" 
+                 :key="index" 
+                 class="message-row" 
+                 :class="{ 'user-row': msg.isUser, 'ai-row': !msg.isUser }">
+              
+              <div v-if="!msg.isUser" class="ai-avatar-chat">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z"/>
+                </svg>
+              </div>
+
+              <div class="message-bubble">
+                {{ msg.text }}
+              </div>
+            </div>
+          </div>
+
+          <div v-if="isChatLoading" class="message-row ai-row">
+              <div class="ai-avatar-chat">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z"/></svg>
+              </div>
+              <div class="message-bubble loading-dots">...</div>
+          </div>
+
         </div>
 
         <div class="chat-footer">
@@ -315,8 +330,13 @@ export default {
       </div>
     </transition>
 
-    <button class="chat-button" @click="toggleChat">
-      <span v-if="!isChatOpen">💬</span>
+    <button class="chat-button" :class="{ 'is-open': isChatOpen }" @click="toggleChat">
+      <div v-if="!isChatOpen" class="btn-content">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z"/>
+        </svg>
+        <span>Ask Kenji</span>
+      </div>
       <span v-else>▼</span>
     </button>
   </div>
@@ -343,7 +363,7 @@ export default {
   left: 0;
   width: 100%;
   z-index: 1000;
-  background-color: transparent; /* Transparent initially */
+  background-color: transparent; 
   padding-top: 50px;
   padding-bottom: 20px;
   border-bottom: 1px solid transparent;
@@ -352,11 +372,10 @@ export default {
   transition: all 0.3s ease-in-out;
 }
 
-/* Navbar style when scrolled */
 .navbar.scrolled {
   padding-top: 20px; 
   padding-bottom: 20px;
-  background-color: rgba(36, 36, 36, 0.95); /* Dark semi-transparent */
+  background-color: rgba(36, 36, 36, 0.95);
   backdrop-filter: blur(15px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
@@ -449,11 +468,11 @@ export default {
   border-radius: 10px;
 }
 
-/* --- BUTTON & ICONS CONTAINER (Responsive) --- */
+/* --- BUTTON & ICONS CONTAINER --- */
 .action-container {
   display: flex;
   align-items: center;     
-  justify-content: center; /* CENTER on Mobile */
+  justify-content: center; 
   gap: 20px;               
   margin-top: 35px;
   width: 100%;             
@@ -763,7 +782,6 @@ input:focus, textarea:focus {
     font-size: 28px;
   }
   
-  /* Align Action Container to LEFT on Desktop */
   .action-container {
     justify-content: flex-start;
   }
@@ -783,7 +801,9 @@ input:focus, textarea:focus {
   }
 }
 
-/* --- CHATBOT WIDGET STYLES --- */
+/* ================================ */
+/* CHATBOT STYLES            */
+/* ================================ */
 .chatbot-widget {
   position: fixed;
   bottom: 20px;
@@ -795,26 +815,46 @@ input:focus, textarea:focus {
 }
 
 .chat-button {
-  width: 60px;
+  min-width: 60px; 
   height: 60px;
-  border-radius: 50%;
-  background-color: #00ff40;
-  border: none;
+  border-radius: 50px; /* Pill shape */
+  background-color: #00ff40; 
   color: #003f00;
-  font-size: 30px;
+  border: none;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: bold;
+  font-size: 16px;
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(0, 255, 64, 0.4);
-  transition: transform 0.3s, background-color 0.3s;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  transition: all 0.4s ease;
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 0 24px;
+  white-space: nowrap;
 }
 
 .chat-button:hover {
-  transform: scale(1.1);
-  background-color: #00cc33;
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(125, 0, 255, 0.5);
 }
 
+.btn-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Style for open state (Circle) */
+.chat-button.is-open {
+  width: 60px;
+  padding: 0;
+  border-radius: 50%;
+  background-color: #333;
+  color: white;
+}
+
+/* CHAT WINDOW */
 .chat-window {
   width: 350px;
   height: 450px;
@@ -830,7 +870,7 @@ input:focus, textarea:focus {
 }
 
 .chat-header {
-  background-color: #00ff40;
+  background-color: #00ff40; 
   color: #003f00;
   padding: 15px;
   font-weight: bold;
@@ -848,37 +888,125 @@ input:focus, textarea:focus {
   line-height: 1;
 }
 
+/* CHAT BODY & WELCOME SCREEN */
 .chat-body {
   flex: 1;
-  padding: 15px;
+  padding: 20px;
   overflow-y: auto;
   background-color: #1a1a1a;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  justify-content: center; /* Centers welcome screen vertically */
 }
 
-.message {
-  max-width: 80%;
+/* When messages exist, align to top */
+.chat-body.has-messages {
+   justify-content: flex-start;
+}
+
+/* FIX FOR OVERLAP: 
+  Ensure this list takes full width and manages spacing correctly 
+*/
+.message-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; 
+  width: 100%;
+}
+
+/* FIX FOR OVERLAP: 
+  Each row is a flex container. 
+  'flex-shrink: 0' ensures it doesn't squash when the list gets long.
+*/
+.message-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;            
+  width: 100%;        /* Use full width of container */
+  flex-shrink: 0;     /* Prevent squashing */
+}
+
+/* --- AI SPECIFIC STYLES --- */
+.ai-row {
+  justify-content: flex-start; /* Align Left */
+}
+
+.ai-avatar-chat {
+  width: 30px;
+  height: 30px;
+  min-width: 30px; /* Important: stops circle from squishing */
+  background-color: #00ff40;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #003f00;
+}
+
+.ai-avatar-chat svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* --- USER SPECIFIC STYLES --- */
+.user-row {
+  justify-content: flex-end; /* Align Right */
+}
+
+/* --- BUBBLE STYLES --- */
+.message-bubble {
   padding: 10px 14px;
-  border-radius: 10px;
+  border-radius: 15px;
   font-size: 14px;
   line-height: 1.4;
+  position: relative;
+  max-width: 80%; /* Limit bubble width */
   word-wrap: break-word;
 }
 
-.user-msg {
-  align-self: flex-end;
+/* AI Bubble Color */
+.ai-row .message-bubble {
+  background-color: #333;
+  color: #ddd;
+  border-bottom-left-radius: 2px; 
+}
+
+/* User Bubble Color */
+.user-row .message-bubble {
   background-color: #00ff40;
   color: #003f00;
   border-bottom-right-radius: 2px;
 }
 
-.ai-msg {
-  align-self: flex-start;
-  background-color: #333;
-  color: #ddd;
-  border-bottom-left-radius: 2px;
+/* Welcome Screen Styles */
+.welcome-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  color: white;
+}
+
+.welcome-logo {
+  width: 60px;
+  height: 60px;
+  color: #00ff40;
+  margin-bottom: 20px;
+}
+
+.welcome-screen h2 {
+  font-size: 22px;
+  font-weight: bold;
+  margin: 0 0 10px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.welcome-screen p {
+  color: #aaa;
+  font-size: 16px;
+  margin: 0;
 }
 
 .loading-dots {
@@ -929,21 +1057,20 @@ input:focus, textarea:focus {
 }
 
 .project-link {
-  text-decoration: none; /* Removes underline */
-  color: inherit; /* Keeps default black color */
+  text-decoration: none;
+  color: inherit;
   display: inline-block;
 }
 
 .project-link h3 {
   display: flex;
   align-items: center;
-  gap: 10px; /* Space between text and icon */
+  gap: 10px; 
   transition: color 0.3s ease;
 }
 
-/* Hover Effect */
 .project-link:hover h3 {
-  color: #00b32d; /* Turns green on hover */
+  color: #00b32d;
 }
 
 .project-link svg {
