@@ -77,18 +77,25 @@ export default {
       this.isChatOpen = !this.isChatOpen;
     },
 
+    // UPDATED QUERY METHOD
     async query(data) {
-        // NOTE: Make sure your backend server is running on port 3000
-        const response = await fetch(
-            "http://localhost:3000/api/v1/prediction/a567f57f-bb61-42d9-b1d0-4455d4637a19",
-            {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data)
-            }
-        );
-        const result = await response.json();
-        return result;
+        try {
+            const response = await fetch(
+                "https://cloud.flowiseai.com/api/v1/prediction/a5d16278-9b65-4294-90a3-eb9cddea18ce",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(data)
+                }
+            );
+            const result = await response.json();
+            return result;
+        } catch (error) {
+            console.error("API Error:", error);
+            throw error;
+        }
     },
 
     async sendChatMessage() {
@@ -107,7 +114,7 @@ export default {
       });
 
       try {
-        // 2. Call API
+        // 2. Call API (Updated to use the new cloud URL)
         const result = await this.query({ "question": userMsg });
         
         // 3. Add AI Response
