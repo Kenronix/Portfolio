@@ -24,7 +24,7 @@ export default {
       isChatOpen: false,       
       chatInput: '',           
       isChatLoading: false,    
-      messages: [] // Start empty so the Welcome Screen shows first
+      messages: [] 
     };
   },
   mounted() {
@@ -77,16 +77,13 @@ export default {
       this.isChatOpen = !this.isChatOpen;
     },
 
-    // UPDATED QUERY METHOD
     async query(data) {
         try {
             const response = await fetch(
                 "https://cloud.flowiseai.com/api/v1/prediction/a5d16278-9b65-4294-90a3-eb9cddea18ce",
                 {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(data)
                 }
             );
@@ -101,23 +98,18 @@ export default {
     async sendChatMessage() {
       if (!this.chatInput.trim()) return;
 
-      // 1. Add User Message
       const userMsg = this.chatInput;
       this.messages.push({ text: userMsg, isUser: true });
       this.chatInput = '';
       this.isChatLoading = true;
 
-      // Scroll to bottom
       this.$nextTick(() => {
         const chatBody = this.$refs.chatBody;
         if(chatBody) chatBody.scrollTop = chatBody.scrollHeight;
       });
 
       try {
-        // 2. Call API (Updated to use the new cloud URL)
         const result = await this.query({ "question": userMsg });
-        
-        // 3. Add AI Response
         const aiText = result.text || result.answer || JSON.stringify(result);
         this.messages.push({ text: aiText, isUser: false });
 
@@ -156,25 +148,15 @@ export default {
         <p class="role">and I am a <span>Front-end Developer</span></p>
         
         <div class="action-container">
-          
-          <a href="/Batuhan_CV.pdf" download="Batuhan_CV.pdf" class="download-cv-btn">
-            DOWNLOAD CV
-          </a>
-
+          <a href="/Batuhan_CV.pdf" download="Batuhan_CV.pdf" class="download-cv-btn">DOWNLOAD CV</a>
           <div class="social-icons">
             <a href="https://github.com/Kenronix" target="_blank" title="GitHub">
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-              </svg>
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
             </a>
-
             <a href="mailto:kennethjamesbatuhan@gmail.com" title="Email">
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
-              </svg>
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
             </a>
           </div>
-
         </div>
       </div>
       
@@ -308,16 +290,10 @@ export default {
                  :key="index" 
                  class="message-row" 
                  :class="{ 'user-row': msg.isUser, 'ai-row': !msg.isUser }">
-              
               <div v-if="!msg.isUser" class="ai-avatar-chat">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z"/>
-                </svg>
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z"/></svg>
               </div>
-
-              <div class="message-bubble">
-                {{ msg.text }}
-              </div>
+              <div class="message-bubble">{{ msg.text }}</div>
             </div>
           </div>
 
@@ -327,7 +303,6 @@ export default {
               </div>
               <div class="message-bubble loading-dots">...</div>
           </div>
-
         </div>
 
         <div class="chat-footer">
@@ -339,18 +314,22 @@ export default {
 
     <button class="chat-button" :class="{ 'is-open': isChatOpen }" @click="toggleChat">
       <div v-if="!isChatOpen" class="btn-content">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z"/>
-        </svg>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z"/></svg>
         <span>Ask Kenji</span>
       </div>
       <span v-else>▼</span>
     </button>
   </div>
-
 </template>
 
 <style scoped>
+/* ========================================= */
+/* GLOBAL RESET FOR RESPONSIVENESS */
+/* ========================================= */
+*, *::before, *::after {
+  box-sizing: border-box; /* CRITICAL FIX: Ensures padding doesn't break width */
+}
+
 /* --- BASE LAYOUT --- */
 .container {
   width: 100%;
@@ -371,7 +350,7 @@ export default {
   width: 100%;
   z-index: 1000;
   background-color: transparent; 
-  padding-top: 50px;
+  padding-top: 30px;
   padding-bottom: 20px;
   border-bottom: 1px solid transparent;
   display: flex;
@@ -380,8 +359,8 @@ export default {
 }
 
 .navbar.scrolled {
-  padding-top: 20px; 
-  padding-bottom: 20px;
+  padding-top: 15px; 
+  padding-bottom: 15px;
   background-color: rgba(36, 36, 36, 0.95);
   backdrop-filter: blur(15px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
@@ -391,16 +370,18 @@ export default {
 .navbar ul {
   list-style: none;
   display: flex;
-  gap: 20px; 
+  gap: 15px; /* Default small gap for mobile */
   margin: 0;
   padding: 0;
+  flex-wrap: wrap; /* Allows wrapping on tiny screens */
+  justify-content: center;
 }
 
 .navbar li {
   color: white;
   cursor: pointer;
   font-family: 'Montserrat', sans-serif;
-  font-size: 16px; 
+  font-size: 14px; /* Smaller default for mobile */
   transition: color 0.3s ease;
 }
 
@@ -422,12 +403,12 @@ export default {
   justify-content: center; 
   text-align: center;      
   padding: 20px;
-  margin-top: 100px; 
+  margin-top: 80px; 
 }
 
 /* TEXT STYLES */
 .text .hello {
-  font-size: 18px;
+  font-size: 16px;
   color: white;
   margin-bottom: 10px;
   font-family: 'Montserrat', sans-serif;
@@ -435,12 +416,13 @@ export default {
 
 .name {
   margin: 0;
-  /* Updated Clamp for Mobile Safety */
-  font-size: clamp(40px, 12vw, 200px); 
-  line-height: 0.9;
+  /* Fluid typography */
+  font-size: clamp(45px, 12vw, 200px); 
+  line-height: 1; /* Better for mobile wrapping */
   color: #00ff40;
-  letter-spacing: 5px;
+  letter-spacing: 3px;
   font-family: 'Bebas Neue', sans-serif;
+  word-break: break-word; /* Prevents overflow */
 }
 
 .name-gradient {
@@ -450,7 +432,7 @@ export default {
 }
 
 .role {
-  font-size: 18px;
+  font-size: 16px;
   margin-top: 20px;
   color: white;
   font-family: 'Montserrat', sans-serif;
@@ -471,7 +453,7 @@ export default {
 
 .profile-img {
   width: 100%;
-  max-width: 400px; 
+  max-width: 300px; /* Smaller on mobile */
   height: auto;
   border-radius: 10px;
 }
@@ -481,9 +463,10 @@ export default {
   display: flex;
   align-items: center;     
   justify-content: center; 
-  gap: 20px;               
-  margin-top: 35px;
+  gap: 15px;               
+  margin-top: 30px;
   width: 100%;             
+  flex-direction: column; /* Stack on mobile */
 }
 
 /* --- DOWNLOAD BUTTON --- */
@@ -491,18 +474,20 @@ export default {
   display: flex; 
   align-items: center;
   justify-content: center;
-  padding: 12px 35px;
+  padding: 10px 30px;
   border: 2px solid #00ff40;
   background-color: transparent;
   color: #00ff40;
   font-family: 'Montserrat', sans-serif;
   font-weight: 700;
-  font-size: 16px;
+  font-size: 14px;
   text-decoration: none;
   border-radius: 50px;
   letter-spacing: 1px;
   cursor: pointer;
   transition: all 0.3s ease-in-out;
+  width: 100%;
+  max-width: 200px;
 }
 
 .download-cv-btn:hover {
@@ -516,11 +501,12 @@ export default {
 .social-icons {
   display: flex;
   gap: 15px;
+  margin-top: 10px;
 }
 
 .social-icons svg {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   color: white;
   transition: all 0.3s ease;
 }
@@ -532,16 +518,16 @@ export default {
 
 /* --- SECTIONS COMMON STYLES --- */
 .section-title {
-  font-size: 32px;
+  font-size: 28px;
   font-family: 'Bebas Neue', sans-serif;
   letter-spacing: 2px;
-  margin-bottom: 40px;
+  margin-bottom: 30px;
   color: white;
 }
 
 /* --- ABOUT SECTION --- */
 .container-2 {
-  min-height: 80vh; 
+  min-height: auto; /* Remove fixed height constraint */
   background-color: #1a1a1a;
   display: flex;
   justify-content: center;
@@ -552,10 +538,11 @@ export default {
 .content-2 {
   max-width: 800px;
   text-align: center;
+  width: 100%;
 }
 
 .about-card p {
-  font-size: 20px;
+  font-size: 16px;
   color: #ccc;
   line-height: 1.6;
   font-family: 'Montserrat', sans-serif;
@@ -567,79 +554,74 @@ export default {
 
 /* --- PROJECTS SECTION --- */
 .container-3 {
-  min-height: 80vh; 
+  min-height: auto; 
   background-color: #f5f5f5; 
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 80px 20px;
+  padding: 60px 20px;
 }
 
 .projects-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 30px;
+  gap: 20px;
   width: 100%;
   max-width: 1000px;
 }
 
 .project-card {
   background: white;
-  padding: 30px;
+  padding: 20px;
   border-radius: 15px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   text-align: left;
 }
 
-.project-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 40px rgba(0,0,0,0.15);
-}
-
 .project-card h3 {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 28px;
+  font-size: 24px;
   margin: 0 0 5px 0;
   color: #333;
 }
 
 .project-subtitle {
   font-family: 'Montserrat', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   color: #00b32d;
   font-weight: bold;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 
 .project-desc {
   font-family: 'Montserrat', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   color: #555;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   line-height: 1.5;
 }
 
 .tags {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
 .tags span {
   background-color: #e0ffe6;
   color: #00661a;
-  padding: 5px 12px;
+  padding: 4px 10px;
   border-radius: 20px;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: bold;
   font-family: 'Montserrat', sans-serif;
 }
 
 /* --- CONTACT SECTION --- */
 .container-4 {
-  min-height: 90vh;
+  min-height: auto;
   background-color: #111;
   display: flex;
   flex-direction: column;
@@ -658,25 +640,25 @@ export default {
 
 .contact-card {
   background-color: #1a1a1a;
-  padding: 40px;
+  padding: 25px 20px; /* Reduced horizontal padding */
   border-radius: 15px;
   width: 100%;
   max-width: 600px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  box-shadow: 0 5px 20px rgba(0,0,0,0.3);
   border: 1px solid #333;
-  margin: 0 auto; 
 }
 
 .contact-header {
   color: #888;
   font-family: 'Montserrat', sans-serif;
-  font-size: 18px;
-  margin-bottom: 30px;
+  font-size: 16px;
+  margin-bottom: 25px;
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   text-align: left;
+  width: 100%;
 }
 
 .form-group label {
@@ -684,22 +666,21 @@ export default {
   color: #00ff40;
   font-family: 'Montserrat', sans-serif;
   font-size: 14px;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   font-weight: bold;
 }
 
 input, textarea {
   width: 100%; 
-  box-sizing: border-box; 
   padding: 12px;
   background-color: #2a2a2a;
   border: 1px solid #444;
   border-radius: 8px;
   color: white;
   font-family: 'Montserrat', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   transition: all 0.3s;
-  resize: none;
+  resize: vertical;
 }
 
 input:focus, textarea:focus {
@@ -710,39 +691,36 @@ input:focus, textarea:focus {
 
 .send-btn {
   width: 100%;
-  padding: 15px;
+  padding: 12px;
   background-color: #00ff40;
   color: #003f00;
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 24px;
+  font-size: 20px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  letter-spacing: 2px;
-  transition: transform 0.2s, background-color 0.2s;
+  letter-spacing: 1px;
   margin-top: 10px;
 }
 
-.send-btn:hover {
-  background-color: #00cc33;
-  transform: scale(1.02);
+.contact-links {
+  margin-top: 25px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px;
+  color: #666;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
-.contact-links {
-  margin-top: 30px;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 14px;
-  color: #666;
+.contact-links span {
+  display: none; /* Hide separator on mobile */
 }
 
 .contact-links a {
   color: #888;
   text-decoration: none;
   transition: color 0.3s;
-}
-
-.contact-links a:hover {
-  color: #00ff40;
 }
 
 /* --- FOOTER --- */
@@ -752,7 +730,7 @@ input:focus, textarea:focus {
   text-align: center;
   padding: 20px;
   font-family: 'Montserrat', sans-serif;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 /* ================================ */
@@ -769,49 +747,42 @@ input:focus, textarea:focus {
 }
 
 .chat-button {
-  min-width: 60px; 
-  height: 60px;
-  border-radius: 50px; /* Pill shape */
+  min-width: 50px; 
+  height: 50px;
+  border-radius: 50px;
   background-color: #00ff40; 
   color: #003f00;
   border: none;
   font-family: 'Montserrat', sans-serif;
   font-weight: bold;
-  font-size: 16px;
+  font-size: 14px;
   cursor: pointer;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  transition: all 0.4s ease;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0 24px;
-  white-space: nowrap;
-}
-
-.chat-button:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(125, 0, 255, 0.5);
+  padding: 0 20px;
 }
 
 .btn-content {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 /* Style for open state (Circle) */
 .chat-button.is-open {
-  width: 60px;
+  width: 50px;
   padding: 0;
   border-radius: 50%;
   background-color: #333;
   color: white;
 }
 
-/* CHAT WINDOW */
+/* CHAT WINDOW - RESPONSIVE */
 .chat-window {
-  width: 350px;
-  height: 450px;
+  width: 320px;
+  height: 400px;
   background-color: #1e1e1e;
   border: 1px solid #333;
   border-radius: 12px;
@@ -826,7 +797,7 @@ input:focus, textarea:focus {
 .chat-header {
   background-color: #00ff40; 
   color: #003f00;
-  padding: 15px;
+  padding: 12px 15px;
   font-weight: bold;
   display: flex;
   justify-content: space-between;
@@ -836,59 +807,48 @@ input:focus, textarea:focus {
 .close-btn {
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: 20px;
   cursor: pointer;
   color: #003f00;
   line-height: 1;
 }
 
-/* CHAT BODY & WELCOME SCREEN */
 .chat-body {
   flex: 1;
-  padding: 20px;
+  padding: 15px;
   overflow-y: auto;
   background-color: #1a1a1a;
   display: flex;
   flex-direction: column;
-  justify-content: center; /* Centers welcome screen vertically */
+  justify-content: center;
 }
 
-/* When messages exist, align to top */
 .chat-body.has-messages {
    justify-content: flex-start;
 }
 
-/* FIX FOR OVERLAP: 
-  Ensure this list takes full width and manages spacing correctly 
-*/
 .message-list {
   display: flex;
   flex-direction: column;
-  gap: 15px; 
+  gap: 12px; 
   width: 100%;
 }
 
-/* FIX FOR OVERLAP: 
-  Each row is a flex container. 
-  'flex-shrink: 0' ensures it doesn't squash when the list gets long.
-*/
 .message-row {
   display: flex;
   align-items: flex-end;
   gap: 8px;            
-  width: 100%;        /* Use full width of container */
-  flex-shrink: 0;     /* Prevent squashing */
+  width: 100%;
+  flex-shrink: 0;
 }
 
-/* --- AI SPECIFIC STYLES --- */
-.ai-row {
-  justify-content: flex-start; /* Align Left */
-}
+.ai-row { justify-content: flex-start; }
+.user-row { justify-content: flex-end; }
 
 .ai-avatar-chat {
-  width: 30px;
-  height: 30px;
-  min-width: 30px; /* Important: stops circle from squishing */
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
   background-color: #00ff40;
   border-radius: 50%;
   display: flex;
@@ -897,42 +857,30 @@ input:focus, textarea:focus {
   color: #003f00;
 }
 
-.ai-avatar-chat svg {
-  width: 16px;
-  height: 16px;
-}
+.ai-avatar-chat svg { width: 14px; height: 14px; }
 
-/* --- USER SPECIFIC STYLES --- */
-.user-row {
-  justify-content: flex-end; /* Align Right */
-}
-
-/* --- BUBBLE STYLES --- */
 .message-bubble {
-  padding: 10px 14px;
-  border-radius: 15px;
-  font-size: 14px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 13px;
   line-height: 1.4;
   position: relative;
-  max-width: 80%; /* Limit bubble width */
+  max-width: 80%;
   word-wrap: break-word;
 }
 
-/* AI Bubble Color */
 .ai-row .message-bubble {
   background-color: #333;
   color: #ddd;
   border-bottom-left-radius: 2px; 
 }
 
-/* User Bubble Color */
 .user-row .message-bubble {
   background-color: #00ff40;
   color: #003f00;
   border-bottom-right-radius: 2px;
 }
 
-/* Welcome Screen Styles */
 .welcome-screen {
   display: flex;
   flex-direction: column;
@@ -942,16 +890,16 @@ input:focus, textarea:focus {
 }
 
 .welcome-logo {
-  width: 60px;
-  height: 60px;
+  width: 50px;
+  height: 50px;
   color: #00ff40;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 .welcome-screen h2 {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: bold;
-  margin: 0 0 10px 0;
+  margin: 0 0 8px 0;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -959,14 +907,11 @@ input:focus, textarea:focus {
 
 .welcome-screen p {
   color: #aaa;
-  font-size: 16px;
+  font-size: 14px;
   margin: 0;
 }
 
-.loading-dots {
-  font-style: italic;
-  color: #888;
-}
+.loading-dots { font-style: italic; color: #888; }
 
 .chat-footer {
   padding: 10px;
@@ -978,147 +923,91 @@ input:focus, textarea:focus {
 
 .chat-footer input {
   flex: 1;
-  padding: 10px;
+  padding: 8px 12px;
   border-radius: 20px;
   border: 1px solid #444;
   background-color: #333;
   color: white;
   outline: none;
+  font-size: 13px;
 }
 
-.chat-footer input:focus {
-  border-color: #00ff40;
-}
+.chat-footer input:focus { border-color: #00ff40; }
 
 .chat-footer button {
   background: none;
   border: none;
   color: #00ff40;
-  font-size: 20px;
+  font-size: 18px;
   cursor: pointer;
 }
 
-.chat-footer button:hover {
-  color: white;
-}
+.slide-fade-enter-active, .slide-fade-leave-active { transition: all 0.3s ease; }
+.slide-fade-enter-from, .slide-fade-leave-to { opacity: 0; transform: translateY(20px); }
 
-.slide-fade-enter-active, .slide-fade-leave-active {
-  transition: all 0.3s ease;
-}
-.slide-fade-enter-from, .slide-fade-leave-to {
-  opacity: 0;
-  transform: translateY(20px);
-}
+.project-link { text-decoration: none; color: inherit; display: inline-block; }
+.project-link h3 { display: flex; align-items: center; gap: 8px; transition: color 0.3s ease; }
+.project-link:hover h3 { color: #00b32d; }
+.project-link svg { width: 18px; height: 18px; }
 
-.project-link {
-  text-decoration: none;
-  color: inherit;
-  display: inline-block;
-}
-
-.project-link h3 {
-  display: flex;
-  align-items: center;
-  gap: 10px; 
-  transition: color 0.3s ease;
-}
-
-.project-link:hover h3 {
-  color: #00b32d;
-}
-
-.project-link svg {
-  width: 20px;
-  height: 20px;
-}
-
-/* --- MOBILE SPECIFIC FIXES --- */
-@media (max-width: 768px) {
-  /* Navbar tweaks */
-  .navbar { padding-top: 20px; }
-  .navbar ul { gap: 15px; }
-  .navbar li { font-size: 14px; }
-
-  /* Reduce card padding on mobile */
-  .contact-card, .project-card {
-    padding: 20px;
-  }
-  
-  /* Font size adjustments */
-  .about-card p {
-    font-size: 16px;
-  }
-}
-
-/* Specific Chatbot Mobile Fix */
-@media (max-width: 480px) {
-  .chat-window {
-    width: 90vw; /* Takes up most of width on small screens */
-    height: 60vh;
-    right: 5vw; /* Centered relative to view */
-    bottom: 80px; 
-  }
-  .chatbot-widget {
-     right: 15px; 
-     bottom: 15px;
-  }
-  .chat-button {
-    height: 50px;
-    font-size: 14px;
-  }
-}
-
-/* --- DESKTOP VIEW --- */
+/* ========================================= */
+/* DESKTOP (LARGE SCREEN) OVERRIDES */
+/* ========================================= */
 @media (min-width: 1024px) {
-  .navbar {
-    padding-top: 60px;
-    padding-bottom: 30px;
-  }
-  
-  .navbar ul {
-    gap: 40px;
-  }
-
-  .navbar li {
-    font-size: 20px;
-  }
+  .navbar { padding-top: 60px; padding-bottom: 30px; }
+  .navbar ul { gap: 40px; }
+  .navbar li { font-size: 20px; }
 
   .content {
     flex-direction: row; 
     justify-content: space-between;
     text-align: left; 
     padding: 0 10%; 
+    margin-top: 100px;
   }
 
-  .text .hello {
-    font-size: 24px;
-    margin-bottom: 20px;
-  }
-
-  .name {
-    letter-spacing: 10px;
-  }
-
-  .role {
-    font-size: 28px;
-  }
+  .text .hello { font-size: 24px; margin-bottom: 20px; }
+  .name { letter-spacing: 10px; line-height: 0.9; }
+  .role { font-size: 28px; }
   
-  .action-container {
-    justify-content: flex-start;
-  }
+  .action-container { flex-direction: row; justify-content: flex-start; }
+  .image-wrapper { margin-top: 0; width: auto; display: block; }
+  .profile-img { max-width: 700px; }
 
-  .image-wrapper {
-    margin-top: 0;
-    width: auto;
-    display: block;
-  }
+  /* Section Layouts */
+  .container-2, .container-3, .container-4 { min-height: 80vh; }
+  .about-card p { font-size: 20px; }
+  .projects-grid { grid-template-columns: 1fr 1fr; gap: 30px; }
+  .project-card { padding: 30px; }
+  .project-card h3 { font-size: 28px; }
+  .project-subtitle { font-size: 16px; }
+  .project-desc { font-size: 16px; }
+  .tags span { font-size: 14px; padding: 5px 12px; }
 
-  .profile-img {
-    max-width: 700px; 
-  }
+  .contact-card { padding: 40px; }
+  .form-group label { font-size: 14px; }
+  input, textarea { font-size: 16px; }
+  .send-btn { font-size: 24px; padding: 15px; }
+  .contact-links { flex-direction: row; gap: 5px; font-size: 14px; }
+  .contact-links span { display: inline; }
+  .footer { font-size: 14px; }
 
-  .projects-grid {
-    grid-template-columns: 1fr 1fr;
+  /* Chatbot Desktop */
+  .chat-window { width: 350px; height: 450px; }
+  .chat-button { min-width: 60px; height: 60px; font-size: 16px; padding: 0 24px; }
+  .chat-button.is-open { width: 60px; }
+}
+
+/* ========================================= */
+/* SPECIFIC MOBILE TWEAKS */
+/* ========================================= */
+@media (max-width: 480px) {
+  .chat-window {
+    width: 90vw; 
+    height: 60vh;
+    right: 5vw; 
+    bottom: 80px; 
   }
+  .chatbot-widget { right: 15px; bottom: 15px; }
 }
 </style>
