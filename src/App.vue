@@ -435,7 +435,8 @@ export default {
 
 .name {
   margin: 0;
-  font-size: clamp(60px, 12vw, 200px); 
+  /* Updated Clamp for Mobile Safety */
+  font-size: clamp(40px, 12vw, 200px); 
   line-height: 0.9;
   color: #00ff40;
   letter-spacing: 5px;
@@ -754,60 +755,6 @@ input:focus, textarea:focus {
   font-size: 14px;
 }
 
-/* --- DESKTOP VIEW --- */
-@media (min-width: 1024px) {
-  .navbar {
-    padding-top: 60px;
-    padding-bottom: 30px;
-  }
-  
-  .navbar ul {
-    gap: 40px;
-  }
-
-  .navbar li {
-    font-size: 20px;
-  }
-
-  .content {
-    flex-direction: row; 
-    justify-content: space-between;
-    text-align: left; 
-    padding: 0 10%; 
-  }
-
-  .text .hello {
-    font-size: 24px;
-    margin-bottom: 20px;
-  }
-
-  .name {
-    letter-spacing: 10px;
-  }
-
-  .role {
-    font-size: 28px;
-  }
-  
-  .action-container {
-    justify-content: flex-start;
-  }
-
-  .image-wrapper {
-    margin-top: 0;
-    width: auto;
-    display: block;
-  }
-
-  .profile-img {
-    max-width: 700px; 
-  }
-
-  .projects-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
 /* ================================ */
 /* CHATBOT STYLES            */
 /* ================================ */
@@ -1083,5 +1030,95 @@ input:focus, textarea:focus {
 .project-link svg {
   width: 20px;
   height: 20px;
+}
+
+/* --- MOBILE SPECIFIC FIXES --- */
+@media (max-width: 768px) {
+  /* Navbar tweaks */
+  .navbar { padding-top: 20px; }
+  .navbar ul { gap: 15px; }
+  .navbar li { font-size: 14px; }
+
+  /* Reduce card padding on mobile */
+  .contact-card, .project-card {
+    padding: 20px;
+  }
+  
+  /* Font size adjustments */
+  .about-card p {
+    font-size: 16px;
+  }
+}
+
+/* Specific Chatbot Mobile Fix */
+@media (max-width: 480px) {
+  .chat-window {
+    width: 90vw; /* Takes up most of width on small screens */
+    height: 60vh;
+    right: 5vw; /* Centered relative to view */
+    bottom: 80px; 
+  }
+  .chatbot-widget {
+     right: 15px; 
+     bottom: 15px;
+  }
+  .chat-button {
+    height: 50px;
+    font-size: 14px;
+  }
+}
+
+/* --- DESKTOP VIEW --- */
+@media (min-width: 1024px) {
+  .navbar {
+    padding-top: 60px;
+    padding-bottom: 30px;
+  }
+  
+  .navbar ul {
+    gap: 40px;
+  }
+
+  .navbar li {
+    font-size: 20px;
+  }
+
+  .content {
+    flex-direction: row; 
+    justify-content: space-between;
+    text-align: left; 
+    padding: 0 10%; 
+  }
+
+  .text .hello {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  .name {
+    letter-spacing: 10px;
+  }
+
+  .role {
+    font-size: 28px;
+  }
+  
+  .action-container {
+    justify-content: flex-start;
+  }
+
+  .image-wrapper {
+    margin-top: 0;
+    width: auto;
+    display: block;
+  }
+
+  .profile-img {
+    max-width: 700px; 
+  }
+
+  .projects-grid {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 </style>
